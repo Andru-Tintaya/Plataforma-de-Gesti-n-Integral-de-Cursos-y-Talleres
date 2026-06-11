@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, redirect, url_for
 from flask_login import current_user
 from flask_migrate import Migrate
 from app.extensions import db, bcrypt, login_manager
@@ -35,39 +35,44 @@ def create_app(config_class=Config):
     @app.route('/')
     def index():
         if current_user.is_authenticated:
-            if current_user.rol.nombre == 'admin':
-                return redirect(url_for('admin.dashboard'))
-            elif current_user.rol.nombre == 'docente':
-                return redirect(url_for('cursos.mis_cursos'))
-            else:
+            # Asegurarse de que el rol exista antes de acceder a .nombre
+            if current_user.rol:
+                if current_user.rol.nombre == 'admin':
+                    return redirect(url_for('admin.dashboard'))
                 return redirect(url_for('cursos.mis_cursos'))
         return redirect(url_for('auth.login'))
     
-    # INICIALIZAR BASE DE DATOS
+    # INICIALIZACIÓN DE BASE DE DATOS Y DATOS POR DEFECTO
     with app.app_context():
+        # Crear tablas
         db.create_all()
         
-        from app.models import Rol
+        from app.models import Rol, Usuario
+        
+        # 1. Crear Roles si no existen
         roles_data = ['admin', 'docente', 'estudiante']
         for nombre in roles_data:
             if not Rol.query.filter_by(nombre=nombre).first():
                 db.session.add(Rol(nombre=nombre))
         
-        from app.models import Usuario
-        if not Usuario.query.filter_by(ru='000001').first():
-            password_admin = bcrypt.generate_password_hash('admin123').decode('utf-8')
-            rol_admin = Rol.query.filter_by(nombre='admin').first()
-            
-            admin_default = Usuario(
-                ru='000001',
-                ci='000001',
-                nombre_completo='Administrador',
-                email='admin@uni.edu',
-                password=password_admin,
-                rol_id=rol_admin.id
-            )
-            db.session.add(admin_default)
-        
+        # Guardar roles primero para asegurar las relaciones
         db.session.commit()
+        
+        # 2. Crear Administrador por defecto
+        if not Usuario.query.filter_by(ru='000001').first():
+            rol_admin = Rol.query.filter_by(nombre='admin').first()
+            if rol_admin:
+                password_admin = bcrypt.generate_password_hash('admin123').decode('utf-8')
+                
+                admin_default = Usuario(
+                    ru='000001',
+                    ci='000001',
+                    nombre_completo='Administrador',
+                    email='admin@uni.edu',
+                    password=password_admin,
+                    rol_id=rol_admin.id
+                )
+                db.session.add(admin_default)
+                db.session.commit() # Commit final tras crear el admin
     
     return app
