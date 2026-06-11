@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Entorno virtual
+venv/
+env/
+ENV/
+
+# Base de datos
+*.db
+*.sqlite
+*.sqlite3
+instance/
+
+# Flask
+instance/
+.coverage
+htmlcov/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# No ignorar requirements.txt

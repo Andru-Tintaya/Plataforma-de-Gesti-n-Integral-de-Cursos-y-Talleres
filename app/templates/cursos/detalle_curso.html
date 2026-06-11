@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{{ curso.nombre }}</h2>
+<p class="text-muted">
+    Código: {{ curso.codigo }} | Paralelo: {{ curso.paralelo }} | 
+    Gestión: {{ curso.gestion }}
+</p>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h3>{{ curso.num_sesiones }}</h3>
+                <p class="text-muted">Sesiones Totales</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h3>{{ sesiones|length }}</h3>
+                <p class="text-muted">Sesiones Tomadas</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- BOTÓN TOMAR ASISTENCIA (solo docente) -->
+{% if es_docente %}
+<a href="{{ url_for('cursos.tomar_asistencia', curso_id=curso.id) }}" 
+   class="btn btn-primary mb-3">Tomar Asistencia</a>
+{% endif %}
+
+<h4>Historial de Sesiones</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Sesión</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sesion in sesiones %}
+        <tr>
+            <td>Sesión {{ sesion.numero }}</td>
+            <td>{{ sesion.fecha.strftime('%d/%m/%Y') }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="2" class="text-center">No hay sesiones registradas</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{{ url_for('cursos.mis_cursos') }}" class="btn btn-secondary">Volver</a>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Gestionar Usuarios</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>RU</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in usuarios %}
+        <tr>
+            <td>{{ usuario.ru }}</td>
+            <td>{{ usuario.nombre_completo }}</td>
+            <td>{{ usuario.email }}</td>
+            <td>
+                <span class="badge bg-{{ 'danger' if usuario.rol.nombre == 'admin' else 'primary' if usuario.rol.nombre == 'docente' else 'success' }}">
+                    {{ usuario.rol.nombre }}
+                </span>
+            </td>
+            <td>
+                <a href="{{ url_for('admin.editar_usuario', id=usuario.id) }}" class="btn btn-warning btn-sm">✏️ Editar</a>
+                
+                {% if usuario.id != current_user.id %}
+                <form method="POST" action="{{ url_for('admin.eliminar_usuario', id=usuario.id) }}" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar usuario?')">🗑️</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

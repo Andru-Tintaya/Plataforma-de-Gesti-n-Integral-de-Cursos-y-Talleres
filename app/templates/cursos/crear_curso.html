@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Crear Nuevo Curso</h2>
+
+<form method="POST" class="card card-body">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Nombre del Curso</label>
+            <input type="text" name="nombre" class="form-control" required>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Código</label>
+            <input type="text" name="codigo" class="form-control" required>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Paralelo</label>
+            <select name="paralelo" class="form-select">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+            </select>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Número de Sesiones</label>
+            <input type="number" name="num_sesiones" class="form-control" value="3" min="1" max="10" required>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Gestión</label>
+            <input type="number" name="gestion" class="form-control" value="2026" required>
+        </div>
+    </div>
+    
+    <button type="submit" class="btn btn-success">Crear Curso</button>
+    <a href="{{ url_for('cursos.lista_cursos') }}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

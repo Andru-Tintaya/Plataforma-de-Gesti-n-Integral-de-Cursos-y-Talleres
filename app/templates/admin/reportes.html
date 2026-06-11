@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Reportes de Asistencia</h2>
+
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Curso</th>
+            <th>Código</th>
+            <th>Inscritos</th>
+            <th>Total Asistencias</th>
+            <th>Promedio</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in reporte %}
+        <tr>
+            <td>{{ r.curso.nombre }}</td>
+            <td>{{ r.curso.codigo }}</td>
+            <td>{{ r.inscritos }}</td>
+            <td>{{ r.asistencias }}</td>
+            <td>
+                {% if r.inscritos > 0 %}
+                    {{ "%.1f"|format((r.asistencias / (r.inscritos * r.curso.num_sesiones)) * 100) }}%
+                {% else %}
+                    0%
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5" class="text-center">No hay datos</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

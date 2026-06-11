@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Validar Pagos</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>RU</th>
+            <th>Estudiante</th>
+            <th>Curso</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ins in inscripciones %}
+        <tr>
+            <td>{{ ins.usuario.ru }}</td>
+            <td>{{ ins.usuario.nombre_completo }}</td>
+            <td>{{ ins.curso.nombre }}</td>
+            <td>
+                <form method="POST" class="d-inline">
+                    <input type="hidden" name="inscripcion_id" value="{{ ins.id }}">
+                    <button type="submit" name="accion" value="aprobar" class="btn btn-success btn-sm">✅</button>
+                    <button type="submit" name="accion" value="rechazar" class="btn btn-danger btn-sm">❌</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

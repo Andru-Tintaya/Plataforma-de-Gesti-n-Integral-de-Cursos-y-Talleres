@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Panel de Administración</h2>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h3>{{ stats.usuarios }}</h3>
+                <p>Total Usuarios</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h3>{{ stats.cursos }}</h3>
+                <p>Cursos Activos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-body">
+                <h3>{{ stats.inscripciones }}</h3>
+                <p>Inscripciones Pendientes</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="list-group mt-4">
+    <a href="{{ url_for('admin.validar_pagos') }}" class="list-group-item list-group-item-action">
+        Validar Pagos de Estudiantes
+    </a>
+    <a href="{{ url_for('admin.reportes') }}" class="list-group-item list-group-item-action">
+        Ver Reportes de Asistencia
+    </a>
+    <a href="{{ url_for('admin.usuarios') }}" class="list-group-item list-group-item-action">
+        Gestionar Usuarios
+    </a>
+</div>
+{% endblock %}
