@@ -15,7 +15,7 @@ def create_app(config_class=Config):
     login_manager.init_app(app)
     migrate.init_app(app, db)
     
-    # User Loader para Flask-Login
+    # User Loader
     @login_manager.user_loader
     def load_user(user_id):
         from app.models import Usuario
@@ -30,19 +30,35 @@ def create_app(config_class=Config):
     app.register_blueprint(cursos_bp, url_prefix='/cursos')
     app.register_blueprint(admin_bp, url_prefix='/admin')
     
-    # Ruta principal
-    from app.cursos.routes import cursos_bp
-    
-    @app.route('/')
-    def index():
-        from flask import redirect, url_for
-        if not hasattr(login_manager, 'anonymous_user'):
-            from flask_login import current_user
-            if current_user.is_authenticated:
-                if current_user.rol.nombre == 'admin':
-                    return redirect(url_for('admin_bp.dashboard'))
-                return redirect(url_for('cursos_bp.mis_cursos'))
-        from flask import render_template
-        return render_template('base.html')
+    # INICIALIZAR BASE DE DATOS AUTOMÁTICAMENTE
+    with app.app_context():
+        db.create_all()
+        
+        # Crear roles si no existen
+        from app.models import Rol
+        roles_data = ['admin', 'docente', 'estudiante']
+        for nombre in roles_data:
+            if not Rol.query.filter_by(nombre=nombre).first():
+                db.session.add(Rol(nombre=nombre))
+        
+        # Crear usuario admin por defecto si no existe
+        from app.models import Usuario
+        admin_existente = Usuario.query.filter_by(ru='000001').first()
+        if not admin_existente:
+            password_admin = bcrypt.generate_password_hash('admin123').decode('utf-8')
+            rol_admin = Rol.query.filter_by(nombre='admin').first()
+            
+            admin_default = Usuario(
+                ru='000001',
+                ci='000001',
+                nombre_completo='Administrador',
+                email='admin@uni.edu',
+                password=password_admin,
+                rol_id=rol_admin.id
+            )
+            db.session.add(admin_default)
+        
+        db.session.commit()
+        print("✅ Base de datos inicializada")
     
     return app
