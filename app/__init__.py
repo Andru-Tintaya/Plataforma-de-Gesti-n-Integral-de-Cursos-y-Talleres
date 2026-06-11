@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, render_template, redirect, url_for
+from flask_login import current_user
 from flask_migrate import Migrate
 from app.extensions import db, bcrypt, login_manager
 from app.config import Config
@@ -30,21 +31,30 @@ def create_app(config_class=Config):
     app.register_blueprint(cursos_bp, url_prefix='/cursos')
     app.register_blueprint(admin_bp, url_prefix='/admin')
     
-    # INICIALIZAR BASE DE DATOS AUTOMÁTICAMENTE
+    # RUTA RAÍZ - Redirigir según el rol
+    @app.route('/')
+    def index():
+        if current_user.is_authenticated:
+            if current_user.rol.nombre == 'admin':
+                return redirect(url_for('admin.dashboard'))
+            elif current_user.rol.nombre == 'docente':
+                return redirect(url_for('cursos.mis_cursos'))
+            else:
+                return redirect(url_for('cursos.mis_cursos'))
+        return redirect(url_for('auth.login'))
+    
+    # INICIALIZAR BASE DE DATOS
     with app.app_context():
         db.create_all()
         
-        # Crear roles si no existen
         from app.models import Rol
         roles_data = ['admin', 'docente', 'estudiante']
         for nombre in roles_data:
             if not Rol.query.filter_by(nombre=nombre).first():
                 db.session.add(Rol(nombre=nombre))
         
-        # Crear usuario admin por defecto si no existe
         from app.models import Usuario
-        admin_existente = Usuario.query.filter_by(ru='000001').first()
-        if not admin_existente:
+        if not Usuario.query.filter_by(ru='000001').first():
             password_admin = bcrypt.generate_password_hash('admin123').decode('utf-8')
             rol_admin = Rol.query.filter_by(nombre='admin').first()
             
@@ -59,6 +69,5 @@ def create_app(config_class=Config):
             db.session.add(admin_default)
         
         db.session.commit()
-        print("✅ Base de datos inicializada")
     
     return app
