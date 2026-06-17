@@ -1,0 +1,42 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="/">Cursos Universitarios</a>
+        
+        <div class="navbar-nav ms-auto">
+            {% if current_user.is_authenticated %}
+                <!-- ADMIN -->
+                {% if current_user.rol.nombre == 'admin' %}
+                    <a class="nav-link" href="{{ url_for('admin.dashboard') }}">Admin</a>
+                    <a class="nav-link" href="{{ url_for('admin.usuarios') }}">Usuarios</a>
+                {% endif %}
+                
+                <!-- DOCENTE -->
+                {% if current_user.rol.nombre == 'docente' %}
+                    <a class="nav-link" href="{{ url_for('cursos.mis_cursos') }}">Mis Cursos</a>
+                    <a class="nav-link" href="{{ url_for('cursos.crear_curso') }}">Crear</a>
+                {% endif %}
+                
+                <!-- ESTUDIANTE -->
+                {% if current_user.rol.nombre == 'estudiante' %}
+                    <a class="nav-link" href="{{ url_for('cursos.mis_cursos') }}">Mis Cursos</a>
+                    <a class="nav-link" href="{{ url_for('cursos.lista_cursos') }}">Inscribirse</a>
+                {% endif %}
+                
+                <!-- PERFIL PARA TODOS -->
+                <div class="dropdown">
+                    <a class="nav-link dropdown-toggle text-info" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                         {{ current_user.nombre_completo }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{{ url_for('auth.editar_perfil') }}">Editar Perfil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">Cerrar Sesión</a></li>
+                    </ul>
+                </div>
+            {% else %}
+                <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                <a class="nav-link" href="{{ url_for('auth.register') }}">Registro</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>

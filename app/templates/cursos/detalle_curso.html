@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{{ curso.nombre }}</h2>
+<p class="text-muted">
+    Código: {{ curso.codigo }} | Paralelo: {{ curso.paralelo }} | 
+    Gestión: {{ curso.gestion }}
+</p>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h3>{{ curso.num_sesiones }}</h3>
+                <p class="text-muted">Sesiones Totales</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h3>{{ sesiones_con_estado|length }}</h3>
+                <p class="text-muted">Sesiones Tomadas</p>
+            </div>
+        </div>
+    </div>
+    {% if not es_docente %}
+    <div class="col-md-4">
+        <div class="card {% if asistencias_count == curso.num_sesiones %}border-success{% else %}border-warning{% endif %}">
+            <div class="card-body text-center">
+                <h3>{{ asistencias_count }}</h3>
+                <p class="text-muted">Asistencias</p>
+                {% if asistencias_count == curso.num_sesiones %}
+                <span class="badge bg-success">Completo</span>
+                {% else %}
+                <span class="badge bg-warning">{{ curso.num_sesiones - asistencias_count }} faltas</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if es_docente %}
+<a href="{{ url_for('cursos.tomar_asistencia', curso_id=curso.id) }}" 
+   class="btn btn-primary mb-3">Tomar Asistencia</a>
+{% endif %}
+
+<h4>Historial de Sesiones</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Sesión</th>
+            <th>Fecha</th>
+            {% if not es_docente %}
+            <th>Estado</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in sesiones_con_estado %}
+        <tr>
+            <td>Sesión {{ item.sesion.numero }}</td>
+            <td>{{ item.sesion.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+            {% if not es_docente %}
+            <td>
+                {% if item.presente %}
+                <span class="badge bg-success">Presente</span>
+                {% else %}
+                <span class="badge bg-danger">Ausente</span>
+                {% endif %}
+            </td>
+            {% endif %}
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="3" class="text-center">No hay sesiones registradas</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{{ url_for('cursos.mis_cursos') }}" class="btn btn-secondary">Volver</a>
+{% endblock %}

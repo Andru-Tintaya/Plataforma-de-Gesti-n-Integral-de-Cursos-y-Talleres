@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{% if es_docente %}Mis Cursos Creados{% else %}Mis Cursos{% endif %}</h2>
+
+<div class="row">
+    {% if es_docente %}
+        {% for curso in cursos %}
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5>{{ curso.nombre }}</h5>
+                    <p class="text-muted">
+                        Código: {{ curso.codigo | default('N/A') }} | Paralelo: {{ curso.paralelo | default('N/A') }}
+                    </p>
+                    <a href="{{ url_for('cursos.detalle_curso', curso_id=curso.id) }}" 
+                       class="btn btn-primary btn-sm">Ver Detalle</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-warning">No has creado ningún curso.</div>
+            <a href="{{ url_for('cursos.crear_curso') }}" class="btn btn-primary">Crear Curso</a>
+        </div>
+        {% endfor %}
+    
+    {% else %}
+        <!-- ESTUDIANTE: Mostrar SOLO cursos pagados -->
+        {% set cursos_pagados = inscripciones | selectattr('pago_verificado', 'equalto', True) | list %}
+        
+        {% if cursos_pagados %}
+            {% for ins in cursos_pagados %}
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>{{ ins.curso.nombre }}</h5>
+                        <p class="text-muted">
+                            Código: {{ ins.curso.codigo | default('N/A') }} | Paralelo: {{ ins.curso.paralelo | default('N/A') }}
+                        </p>
+                        <span class="badge bg-success">Pago Verificado</span>
+                        <a href="{{ url_for('cursos.detalle_curso', curso_id=ins.curso.id) }}" 
+                           class="btn btn-primary btn-sm">Ver Detalle</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h5>No estás inscrito en ningún curso</h5>
+                    <p>Inscríbete a un curso y espera la verificación del pago.</p>
+                    <a href="{{ url_for('cursos.lista_cursos') }}" class="btn btn-primary">Ver Cursos Disponibles</a>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Mostrar cursos pendientes (opcional) -->
+        {% set cursos_pendientes = inscripciones | selectattr('pago_verificado', 'equalto', False) | list %}
+        {% if cursos_pendientes %}
+        <div class="col-12 mt-3">
+            <div class="alert alert-warning">
+                <h5>Pagos Pendientes</h5>
+                <p>Los siguientes cursos están esperando verificación:</p>
+                <ul>
+                    {% for ins in cursos_pendientes %}
+                    <li>{{ ins.curso.nombre }} - <span class="badge bg-warning">Esperando pago</span></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

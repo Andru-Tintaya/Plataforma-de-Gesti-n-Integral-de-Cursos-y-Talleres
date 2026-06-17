@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Validar Pagos de Estudiantes</h2>
+
+{% if inscripciones %}
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>RU</th>
+            <th>CI</th>
+            <th>Estudiante</th>
+            <th>Curso</th>
+            <th>Monto</th>
+            <th>Fecha Pago</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ins in inscripciones %}
+        <tr>
+            <td>{{ ins.usuario.ru }}</td>
+            <td>{{ ins.usuario.ci }}</td>
+            <td>{{ ins.usuario.nombre_completo }}</td>
+            <td>{{ ins.curso.nombre }}</td>
+            <td>Bs. {{ ins.pago.monto if ins.pago else 'N/A' }}</td>
+            <td>{{ ins.pago.fecha_pago.strftime('%d/%m/%Y %H:%M') if ins.pago else 'N/A' }}</td>
+            <td>
+                <form method="POST" class="d-inline">
+                    <input type="hidden" name="inscripcion_id" value="{{ ins.id }}">
+                    <button type="submit" name="accion" value="aprobar" class="btn btn-success btn-sm">
+                        Aprobar
+                    </button>
+                    <button type="submit" name="accion" value="rechazar" class="btn btn-danger btn-sm">
+                        Rechazar
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="alert alert-success">
+    <h5>No hay pagos pendientes</h5>
+    <p>Todos los pagos han sido validados.</p>
+</div>
+{% endif %}
+
+<a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Volver</a>
+{% endblock %}

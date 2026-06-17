@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Cursos Disponibles</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Paralelo</th>
+            <th>Docente</th>
+            <th>Sesiones</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for curso in cursos %}
+        <tr>
+            <td>{{ curso.codigo }}</td>
+            <td>{{ curso.nombre }}</td>
+            <td>{{ curso.paralelo }}</td>
+            <td>{{ curso.docente.nombre_completo }}</td>
+            <td>{{ curso.num_sesiones }}</td>
+            <td>
+                {% if current_user.rol.nombre == 'estudiante' %}
+                    <form action="{{ url_for('cursos.inscribir', curso_id=curso.id) }}" method="POST">
+                        <button type="submit" class="btn btn-success btn-sm">Inscribirse</button>
+                    </form>
+                {% elif current_user.rol.nombre == 'docente' %}
+                    <span class="badge bg-secondary">No disponible</span>
+                {% elif current_user.rol.nombre == 'admin' %}
+                    <span class="badge bg-secondary">Solo estudiantes</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="6" class="text-center">No hay cursos disponibles</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="
+    {% if current_user.rol.nombre == 'estudiante' %}
+        {{ url_for('cursos.mis_cursos') }}
+    {% elif current_user.rol.nombre == 'docente' %}
+        {{ url_for('cursos.mis_cursos') }}
+    {% elif current_user.rol.nombre == 'admin' %}
+        {{ url_for('admin.dashboard') }}
+    {% endif %}
+" class="btn btn-secondary">Volver</a>
+
+{% endblock %}

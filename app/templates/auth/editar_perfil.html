@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card card-auth" style="max-width: 500px;">
+    <div class="card-body">
+        <h3 class="text-center mb-4">Editar Perfil</h3>
+        
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">RU</label>
+                <input type="text" value="{{ usuario.ru }}" class="form-control" disabled>
+                <small class="text-muted">El RU no se puede modificar</small>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">CI</label>
+                <input type="text" value="{{ usuario.ci }}" class="form-control" disabled>
+                <small class="text-muted">El CI no se puede modificar</small>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Nombre Completo</label>
+                <input type="text" name="nombre" value="{{ usuario.nombre_completo }}" class="form-control" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" value="{{ usuario.email }}" class="form-control" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Rol</label>
+                <input type="text" value="{{ usuario.rol.nombre.upper() }}" class="form-control" disabled>
+                <small class="text-muted">El rol no se puede modificar</small>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Nueva Contraseña</label>
+                <input type="password" name="password" class="form-control" placeholder="Dejar en blanco para no cambiar">
+                <small class="text-muted">Mínimo 4 caracteres</small>
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
+        </form>
+        
+        <p class="text-center mt-3">
+            <a href="
+            {% if current_user.rol.nombre == 'admin' %}
+                {{ url_for('admin.dashboard') }}
+            {% else %}
+                {{ url_for('cursos.mis_cursos') }}
+            {% endif %}
+            ">Volver</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Editar Usuario</h2>
+
+<form method="POST" class="card card-body">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">RU</label>
+            <input type="text" value="{{ usuario.ru }}" class="form-control" disabled>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            <label class="form-label">CI</label>
+            <input type="text" value="{{ usuario.ci }}" class="form-control" disabled>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Nombre Completo</label>
+            <input type="text" name="nombre" value="{{ usuario.nombre_completo }}" class="form-control" required>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" value="{{ usuario.email }}" class="form-control" required>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Rol</label>
+            <select name="rol_id" class="form-select">
+                {% for rol in roles %}
+                <option value="{{ rol.id }}" {% if rol.id == usuario.rol_id %}selected{% endif %}>
+                    {{ rol.nombre.upper() }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Nueva Contraseña (dejar en blanco para no cambiar)</label>
+            <input type="password" name="password" class="form-control" placeholder="Nueva contraseña">
+        </div>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    <a href="{{ url_for('admin.usuarios') }}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

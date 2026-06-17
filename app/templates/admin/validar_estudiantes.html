@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Validar Estudiantes por Asistencia</h2>
+
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>RU</th>
+            <th>CI</th>
+            <th>Estudiante</th>
+            <th>Curso</th>
+            <th>Asistencias</th>
+            <th>Total Sesiones</th>
+            <th>Porcentaje</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for est in estudiantes %}
+        <tr>
+            <td>{{ est.estudiante.ru if est.estudiante else 'N/A' }}</td>
+            <td>{{ est.estudiante.ci if est.estudiante else 'N/A' }}</td>
+            <td>{{ est.estudiante.nombre_completo if est.estudiante else 'Desconocido' }}</td>
+            <td>{{ est.curso.nombre if est.curso else 'Sin curso' }}</td>
+            <td>{{ est.asistencias | default(0) }}</td>
+            <td>{{ est.total_sesiones | default(0) }}</td>
+            <td>
+                <div class="progress" style="height: 20px;">
+                    {# Usamos |float para asegurar que el cálculo funcione #}
+                    {% set porcentaje = est.porcentaje | float %}
+                    <div class="progress-bar {% if porcentaje >= 50 %}bg-success{% else %}bg-danger{% endif %}" 
+                         role="progressbar" 
+                         style="width: {{ porcentaje }}%"
+                         aria-valuenow="{{ porcentaje }}" aria-valuemin="0" aria-valuemax="100">
+                        {{ "%.1f"|format(porcentaje) }}%
+                    </div>
+                </div>
+            </td>
+            <td>
+                {% if est.aprobado %}
+                <span class="badge bg-success">Aprobado</span>
+                {% else %}
+                <span class="badge bg-danger">No Aprobado</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="8" class="text-center">No hay estudiantes registrados</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Volver</a>
+{% endblock %}

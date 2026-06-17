@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card card-auth">
+    <div class="card-body">
+        <h3 class="text-center mb-4">Registro</h3>
+        
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">RU</label>
+                <input type="text" name="ru" class="form-control" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Cédula de Identidad</label>
+                <input type="text" name="ci" class="form-control" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Nombre Completo</label>
+                <input type="text" name="nombre" class="form-control" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-control" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Rol</label>
+                <select name="rol" class="form-select">
+                    <option value="estudiante">Estudiante</option>
+                    <option value="docente">Docente</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn btn-success w-100">Registrarse</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
